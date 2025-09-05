@@ -1,2 +1,32 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeOutDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.animate-fade-out-down {
+  animation: fadeOutDown 0.5s cubic-bezier(0.4,0,0.2,1);
+}

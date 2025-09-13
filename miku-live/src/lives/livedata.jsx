@@ -2,7 +2,15 @@ const liveData = [
   {
     src: "/image/miku_expo_2025_asia.png",
     title: "Miku Expo 2025 Asia",
-    description: "克莱普顿最新力作",
+    description: `Bangkok Nov 5th Wed.
+    Hong Kong Nov 8th Sat.
+    Jakarta Nov 12th Wed.
+    Manila Nov 16th Sun.
+    Singapore Nov 19th Wed.
+    Kuala Lumpur Nov 22nd Sat.
+    Taipei Nov 26th Wed.
+    Seoul Nov 29th Sat to Nov 30th Sun.
+    `,
     official: "https://mikuexpo.com/asia2025/",
     time: [
       { localstarttime: "2025-11-5T20:00:00", timezone: "Asia/Bangkok", position: "曼谷" },
@@ -19,8 +27,9 @@ const liveData = [
   {
     src: "/image/miku_with_you_2025.webp",
     title: "Miku With You 2025",
-    description: "克莱普顿最新新新新新力作",
-    official: "",
+    description: `2025年12月20日-21日 上海东方体育中心
+    `,
+    official: "https://mp.weixin.qq.com/s/zqYbhTG0jxS9GPI2SdWsXA",
     time: [
       { localstarttime: "2025-12-20T14:00:00", timezone: "Asia/Shanghai", position: "上海" },
       { localstarttime: "2025-12-20T19:00:00", timezone: "Asia/Shanghai", position: "上海" },

@@ -8,7 +8,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Navi />
+      {/* <Navi /> */}
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/lives" element={<LivePage />} />

@@ -8,6 +8,19 @@ export default function LivePage() {
   const [activeIndex, setActiveIndex] = useState(liveData.length - 1);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false });
   const [index, setIndex] = useState(0);
+  const [isPhone, setIsPhone] = useState(false);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsPhone(window.innerWidth < window.innerHeight*1.1);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize(); // 初始化时检查一次
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const calculateCountdown = (timeData) => {
     if (!timeData || timeData.length === 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false };
 
@@ -49,22 +62,27 @@ export default function LivePage() {
       {/* 主要内容区域 */}
       <div className="h-[75vh] flex md:flex-row w-full">
         {/* 左侧图片区域 */}
-        <div className="md:w-[70%] h-full flex items-center justify-center p-4">
-          <img
-            src={liveData[activeIndex].src}
-            className="w-full h-full object-cover rounded-lg shadow-lg transition-all duration-500"
-            alt={liveData[activeIndex].title}
-            loading="eager"
-          />
-        </div>
+          {isPhone ?
+          <></>:
+          (<div className="md:w-[70%] h-full flex items-center justify-center p-4">
+            <img
+              src={liveData[activeIndex].src}
+              className="w-full h-full object-cover rounded-lg shadow-lg transition-all duration-500"
+              alt={liveData[activeIndex].title}
+              loading="eager"
+            />
+          </div>)}
 
         {/* 右侧文字区域 */}
-        <div className="md:w-[30%] flex flex-col p-8 h-full">
-          <h2 className="text-3xl font-bold mb-6 transition-all duration-500 text-center">
+        <div className={` ${isPhone ? 'w-full' : 'md:w-[30%] md:max-w-[30%]'} flex flex-col p-4 h-full`}>
+          <h2 className="flex text-3xl font-bold mb-6 transition-all duration-500 text-center justify-center">
             {liveData[activeIndex].title}
           </h2>
-          <div className="flex-1 mt-4 overflow-hidden">
-            <p className="text-lg transition-all duration-500 max-h-full overflow-auto">
+          <p className="flex text-lg transition-all duration-500 max-h-full overflow-auto">
+              Live information:
+          </p>
+          <div className="flex flex-1 w-full mt-2 overflow-hidden p-4">
+            <p className="flex text-lg w-full transition-all duration-500 max-h-full overflow-auto whitespace-pre-line">
               {liveData[activeIndex].description}
             </p>
           </div>
@@ -75,23 +93,23 @@ export default function LivePage() {
               <p className="flex text-lg mt-4">下一站：</p>
               <div className="flex justify-center space-x-2 mt-4">
                 <div className="text-center">
-                  <span className="block font-mono text-4xl font-bold">{liveData[activeIndex].time[index].position}</span>
+                  <span className="block font-mono text-2xl font-bold">{liveData[activeIndex].time[index].position}</span>
                   {/* <span className="text-sm">天</span> */}
                 </div>
                 <div className="text-center">
-                  <span className="block font-mono text-4xl font-bold">{countdown.days}天</span>
+                  <span className="block font-mono text-2xl font-bold">{countdown.days}天</span>
                   {/* <span className="text-sm">天</span> */}
                 </div>
                 <div className="text-center">
-                  <span className="block font-mono text-4xl font-bold">{countdown.hours}时</span>
+                  <span className="block font-mono text-2xl font-bold">{countdown.hours}时</span>
                   {/* <span className="text-sm">时</span> */}
                 </div>
                 <div className="text-center">
-                  <span className="block font-mono text-4xl font-bold">{countdown.minutes}分</span>
+                  <span className="block font-mono text-2xl font-bold">{countdown.minutes}分</span>
                   {/* <span className="text-sm">分</span> */}
                 </div>
                 <div className="text-center">
-                  <span className="block font-mono text-4xl font-bold">{countdown.seconds}秒</span>
+                  <span className="block font-mono text-2xl font-bold">{countdown.seconds}秒</span>
                   {/* <span className="text-sm">秒</span> */}
                 </div>
               </div>

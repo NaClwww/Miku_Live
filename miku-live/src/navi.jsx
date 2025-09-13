@@ -4,12 +4,13 @@ function Navi(){
     return(
         <div className="navbar bg-base-100 shadow-sm">
             <div className="navbar-start">
-
-                <a className="text-xl">Live Tool</a>
+                <li>
+                    <Link to="/">Live Tool</Link>
+                </li>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-                <li><Link to="/">First Page</Link></li>
+                {/* <li><Link to="/">First Page</Link></li> */}
                 {/* <li>
                     <details>
                     <summary>Parent</summary>

@@ -5,7 +5,7 @@ function Navi(){
         <div className="navbar bg-base-100 shadow-sm">
             <div className="navbar-start">
 
-                <a className="text-xl">Live Show</a>
+                <a className="text-xl">Live Tool</a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">

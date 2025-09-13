@@ -1,5 +1,5 @@
 import { useState } from "react";
-import './App.css';
+import './../App.css';
 // 图片和对应信息的数据结构
 const photoData = [
   {

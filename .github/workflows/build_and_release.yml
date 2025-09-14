@@ -35,24 +35,24 @@ jobs:
         echo "VERSION=${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "Version set to: ${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)"
 
-    # 关键修改：所有操作切换到/react目录
+    # 修复：指向正确的项目目录
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '20'  # 使用Node.js 20而不是24
         cache: 'npm'
-        cache-dependency-path: 'react/package-lock.json'
+        cache-dependency-path: './miku-live/package-lock.json'  # 修复路径
 
     - name: Install dependencies
-      working-directory: ./react
-      run: npm ci || npm install  # 先尝试 npm ci，如果失败则使用 npm install
+      working-directory: ./miku-live  # 修复工作目录
+      run: npm ci || npm install
 
     - name: Build project
-      working-directory: ./react
+      working-directory: ./miku-live  # 修复工作目录
       run: |
         echo "Building React project..."
         npm run build
-        if [ ! -d "build" ]; then
+        if [ ! -d "dist" ]; then  # Vite项目通常构建到dist目录
           echo "::error::Build directory not found! Build may have failed."
           exit 1
         fi
@@ -64,7 +64,7 @@ jobs:
       
     - name: Move build files to docker directory
       run: |
-        cp -R ./react/build/* ./docker/build/
+        cp -R ./miku-live/dist/* ./docker/build/  # 从dist目录复制
         echo "Moved build files to docker directory"
 
     - name: Set up Docker Buildx
@@ -84,7 +84,7 @@ jobs:
       with:
         name: miku_music_card_docker_image-${{ env.VERSION }}
         path: docker/miku_music_card-${{ env.VERSION }}.tar
-        retention-days: 5  # 设置保留期限
+        retention-days: 5
         
     # 生成详细的变更日志
     - name: Generate changelog
@@ -97,7 +97,7 @@ jobs:
         git log -10 --pretty=format:"* %s (%h) - %an" >> changelog.md
         echo "" >> changelog.md
         echo "## Docker Image:" >> changelog.md
-        echo "\`${{ env.DOCKER_HUB_REPO }}:${{ env.VERSION }}\`" >> changelog.md
+        echo "\`miku_music_card:${{ env.VERSION }}\`" >> changelog.md
 
     # 创建 GitHub Release
     - name: Create Release

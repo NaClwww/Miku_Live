@@ -1,0 +1,120 @@
+name: React Build Deployment
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 需要添加写权限以创建 release
+      packages: write  # 添加包发布权限
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史记录以便正确生成变更日志
+
+    # 设置版本号 - 从version.txt文件读取
+    - name: Set version variables
+      id: version
+      run: |
+        # 确保version.txt文件存在
+        if [ ! -f version.txt ]; then
+          echo "1.0.0" > version.txt
+          echo "Created default version.txt file"
+        fi
+        
+        # 读取基础版本号
+        BASE_VERSION=$(cat version.txt | tr -d '\n\r')
+        echo "BUILD_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "BASE_VERSION=${BASE_VERSION}" >> $GITHUB_ENV
+        echo "VERSION=${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "Version set to: ${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)"
+
+    # 关键修改：所有操作切换到/react目录
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: 'react/package-lock.json'
+
+    - name: Install dependencies
+      working-directory: ./react
+      run: npm ci || npm install  # 先尝试 npm ci，如果失败则使用 npm install
+
+    - name: Build project
+      working-directory: ./react
+      run: |
+        echo "Building React project..."
+        npm run build
+        if [ ! -d "build" ]; then
+          echo "::error::Build directory not found! Build may have failed."
+          exit 1
+        fi
+      
+    - name: Create docker directory structure
+      run: |
+        mkdir -p docker/build
+        echo "Preparing docker build files..."
+      
+    - name: Move build files to docker directory
+      run: |
+        cp -R ./react/build/* ./docker/build/
+        echo "Moved build files to docker directory"
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build docker
+      working-directory: ./docker
+      run: |
+        echo "Building Docker image version: ${{ env.VERSION }}"
+        docker build -t miku_music_card:${{ env.VERSION }} -t miku_music_card:latest .
+        docker save -o miku_music_card-${{ env.VERSION }}.tar miku_music_card:${{ env.VERSION }}
+      env:
+        DOCKER_BUILDKIT: 1
+        
+    - name: Archive Docker image
+      uses: actions/upload-artifact@v4
+      with:
+        name: miku_music_card_docker_image-${{ env.VERSION }}
+        path: docker/miku_music_card-${{ env.VERSION }}.tar
+        retention-days: 5  # 设置保留期限
+        
+    # 生成详细的变更日志
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "# Miku Music Card - Release ${{ env.VERSION }}" > changelog.md
+        echo "Build date: $(date +'%Y-%m-%d %H:%M:%S')" >> changelog.md
+        echo "" >> changelog.md
+        echo "## Changes in this build:" >> changelog.md
+        git log -10 --pretty=format:"* %s (%h) - %an" >> changelog.md
+        echo "" >> changelog.md
+        echo "## Docker Image:" >> changelog.md
+        echo "\`${{ env.DOCKER_HUB_REPO }}:${{ env.VERSION }}\`" >> changelog.md
+
+    # 创建 GitHub Release
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ env.VERSION }}
+        tag_name: v${{ env.VERSION }}
+        body_path: changelog.md
+        files: docker/miku_music_card-${{ env.VERSION }}.tar
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    # 添加部署完成通知
+    - name: Deployment Status
+      run: |
+        echo "::notice::Deployment completed successfully!"
+        echo "::notice::Version: ${{ env.VERSION }}"
+        echo "::notice::Docker image built and archived"

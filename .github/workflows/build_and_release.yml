@@ -74,16 +74,16 @@ jobs:
       working-directory: ./docker
       run: |
         echo "Building Docker image version: ${{ env.VERSION }}"
-        docker build -t miku_music_card:${{ env.VERSION }} -t miku_music_card:latest .
-        docker save -o miku_music_card-${{ env.VERSION }}.tar miku_music_card:${{ env.VERSION }}
+        docker build -t miku_live:${{ env.VERSION }} -t miku_live:latest .
+        docker save -o miku_live-${{ env.VERSION }}.tar miku_live:${{ env.VERSION }}
       env:
         DOCKER_BUILDKIT: 1
         
     - name: Archive Docker image
       uses: actions/upload-artifact@v4
       with:
-        name: miku_music_card_docker_image-${{ env.VERSION }}
-        path: docker/miku_music_card-${{ env.VERSION }}.tar
+        name: miku_live_docker_image-${{ env.VERSION }}
+        path: docker/miku_live-${{ env.VERSION }}.tar
         retention-days: 5
         
     # 生成详细的变更日志
@@ -97,7 +97,7 @@ jobs:
         git log -10 --pretty=format:"* %s (%h) - %an" >> changelog.md
         echo "" >> changelog.md
         echo "## Docker Image:" >> changelog.md
-        echo "\`miku_music_card:${{ env.VERSION }}\`" >> changelog.md
+        echo "\`miku_live:${{ env.VERSION }}\`" >> changelog.md
 
     # 创建 GitHub Release
     - name: Create Release
@@ -106,7 +106,7 @@ jobs:
         name: Release ${{ env.VERSION }}
         tag_name: v${{ env.VERSION }}
         body_path: changelog.md
-        files: docker/miku_music_card-${{ env.VERSION }}.tar
+        files: docker/miku_live-${{ env.VERSION }}.tar
         draft: false
         prerelease: false
       env:

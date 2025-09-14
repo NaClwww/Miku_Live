@@ -8,26 +8,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 需要添加写权限以创建 release
-      packages: write  # 添加包发布权限
+      contents: write
+      packages: write  # 确保有包发布权限
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # 获取所有历史记录以便正确生成变更日志
+        fetch-depth: 0
 
-    # 设置版本号 - 从version.txt文件读取
     - name: Set version variables
       id: version
       run: |
-        # 确保version.txt文件存在
         if [ ! -f version.txt ]; then
           echo "1.0.0" > version.txt
           echo "Created default version.txt file"
         fi
-        
-        # 读取基础版本号
         BASE_VERSION=$(cat version.txt | tr -d '\n\r')
         echo "BUILD_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
         echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
@@ -35,18 +31,16 @@ jobs:
         echo "VERSION=${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "Version set to: ${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)"
 
-    # 改为 Yarn
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'  # 使用Node.js 20而不是24
-        cache: 'yarn'  # 改为 yarn
-        cache-dependency-path: './miku-live/yarn.lock'  # 改为 yarn.lock
+        node-version: '20'
+        cache: 'yarn'
+        cache-dependency-path: './miku-live/yarn.lock'
 
     - name: Install dependencies
       working-directory: ./miku-live
-      run: |
-        yarn install
+      run: yarn install
 
     - name: Build project
       working-directory: ./miku-live
@@ -70,23 +64,34 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build docker
+    # 新增：登录到GitHub Container Registry
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # 修改：构建并推送镜像到GHCR
+    - name: Build and push docker image
       working-directory: ./docker
       run: |
-        echo "Building Docker image version: ${{ env.VERSION }}"
-        docker build -t miku_live:${{ env.VERSION }} -t miku_live:latest .
-        docker save -o miku_live-${{ env.VERSION }}.tar miku_live:${{ env.VERSION }}
+        IMAGE_NAME=ghcr.io/${{ github.repository }}/miku_live
+        echo "Building and pushing Docker image: $IMAGE_NAME:${{ env.VERSION }}"
+        docker build -t $IMAGE_NAME:${{ env.VERSION }} -t $IMAGE_NAME:latest .
+        docker push $IMAGE_NAME:${{ env.VERSION }}
+        docker push $IMAGE_NAME:latest
       env:
         DOCKER_BUILDKIT: 1
         
-    - name: Archive Docker image
-      uses: actions/upload-artifact@v4
-      with:
-        name: miku_live_docker_image-${{ env.VERSION }}
-        path: docker/miku_live-${{ env.VERSION }}.tar
-        retention-days: 5
+    # 可选：移除本地tar文件归档步骤（因为已推送）
+    # - name: Archive Docker image
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: miku_live_docker_image-${{ env.VERSION }}
+    #     path: docker/miku_live-${{ env.VERSION }}.tar
+    #     retention-days: 5
         
-    # 生成详细的变更日志
     - name: Generate changelog
       id: changelog
       run: |
@@ -97,24 +102,22 @@ jobs:
         git log -10 --pretty=format:"* %s (%h) - %an" >> changelog.md
         echo "" >> changelog.md
         echo "## Docker Image:" >> changelog.md
-        echo "\`miku_live:${{ env.VERSION }}\`" >> changelog.md
+        echo "\`ghcr.io/${{ github.repository }}/miku_live:${{ env.VERSION }}\`" >> changelog.md
 
-    # 创建 GitHub Release
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         name: Release ${{ env.VERSION }}
         tag_name: v${{ env.VERSION }}
         body_path: changelog.md
-        files: docker/miku_live-${{ env.VERSION }}.tar
+        # files: docker/miku_live-${{ env.VERSION }}.tar  # 移除，因为已推送
         draft: false
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    # 添加部署完成通知
     - name: Deployment Status
       run: |
         echo "::notice::Deployment completed successfully!"
         echo "::notice::Version: ${{ env.VERSION }}"
-        echo "::notice::Docker image built and archived"
+        echo "::notice::Docker image pushed to GHCR"

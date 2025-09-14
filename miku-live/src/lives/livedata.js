@@ -14,7 +14,7 @@ const liveData = [
     official: "https://mikuexpo.com/asia2025/",
     time: [
       { localstarttime: "2025-11-05T20:00:00", timezone: "Asia/Bangkok", position: "曼谷" },
-      { localstarttime: "2025-11-08T12:00:00", timezone: "Asia/Shanghai", position: "香港" },
+      { localstarttime: "2025-11-08T19:00:00", timezone: "Asia/Shanghai", position: "香港" },
       { localstarttime: "2025-11-12T15:00:00", timezone: "Asia/Jakarta", position: "雅加达" },
       { localstarttime: "2025-11-16T20:00:00", timezone: "Asia/Manila", position: "马尼拉" },
       { localstarttime: "2025-11-19T20:00:00", timezone: "Asia/Singapore", position: "新加坡" },

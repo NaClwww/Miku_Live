@@ -46,18 +46,12 @@ jobs:
     - name: Install dependencies
       working-directory: ./miku-live
       run: |
-        yarn install --frozen-lockfile  # 使用 yarn install
-        # 确保 ics 包被正确安装
-        yarn list ics || yarn add ics@^3.1.0
+        yarn install
 
     - name: Build project
       working-directory: ./miku-live
       run: |
-        echo "Building React project..."
-        # 先运行 genics.js 生成 ICS 文件
-        yarn generate-ics  # 使用 yarn 运行脚本
-        # 然后构建项目
-        yarn build  # 使用 yarn build
+        yarn run build
         if [ ! -d "dist" ]; then
           echo "::error::Build directory not found! Build may have failed."
           exit 1

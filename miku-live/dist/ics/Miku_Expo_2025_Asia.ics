@@ -1,0 +1,169 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+PRODID:adamgibbons/ics
+METHOD:PUBLISH
+X-PUBLISHED-TTL:PT1H
+BEGIN:VEVENT
+UID:rIc-TlqnA4yyiYLMNPipp
+SUMMARY:Miku Expo 2025 Asia - 曼谷
+DTSTAMP:20250914T024409Z
+DTSTART:20251105T120000Z
+DTEND:20251105T140000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:曼谷
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:tycJrHQGGBElh2H8rR9Y0
+SUMMARY:Miku Expo 2025 Asia - 香港
+DTSTAMP:20250914T024409Z
+DTSTART:20251108T040000Z
+DTEND:20251108T060000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:香港
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:43i6rhpuhfd13Z0SoWkel
+SUMMARY:Miku Expo 2025 Asia - 雅加达
+DTSTAMP:20250914T024409Z
+DTSTART:20251112T070000Z
+DTEND:20251112T090000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:雅加达
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:uZpY8ZvRiFsVf-91ZRq7Y
+SUMMARY:Miku Expo 2025 Asia - 马尼拉
+DTSTAMP:20250914T024409Z
+DTSTART:20251116T120000Z
+DTEND:20251116T140000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:马尼拉
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:uX-qUb-1h3fiqwjd_40EB
+SUMMARY:Miku Expo 2025 Asia - 新加坡
+DTSTAMP:20250914T024409Z
+DTSTART:20251119T120000Z
+DTEND:20251119T140000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:新加坡
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:V_ELkFCuR2JAwYRzYrFGh
+SUMMARY:Miku Expo 2025 Asia - 吉隆坡
+DTSTAMP:20250914T024409Z
+DTSTART:20251122T113000Z
+DTEND:20251122T133000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:吉隆坡
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:6ED_KbAL_FbalsBao3Y0u
+SUMMARY:Miku Expo 2025 Asia - 台北
+DTSTAMP:20250914T024409Z
+DTSTART:20251126T113000Z
+DTEND:20251126T133000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:台北
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:Z0bPjUjC60Lphw-K39wi9
+SUMMARY:Miku Expo 2025 Asia - 首尔
+DTSTAMP:20250914T024409Z
+DTSTART:20251129T110000Z
+DTEND:20251129T130000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:首尔
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sbE8RaXWiY7Hf5V6S9m50
+SUMMARY:Miku Expo 2025 Asia - 首尔
+DTSTAMP:20250914T024409Z
+DTSTART:20251130T080000Z
+DTEND:20251130T100000Z
+DESCRIPTION:Bangkok Nov 5th Wed.\n    Hong Kong Nov 8th Sat.\n    Jakarta N
+	ov 12th Wed.\n    Manila Nov 16th Sun.\n    Singapore Nov 19th Wed.\n    K
+	uala Lumpur Nov 22nd Sat.\n    Taipei Nov 26th Wed.\n    Seoul Nov 29th Sa
+	t to Nov 30th Sun.\n    
+URL:https://mikuexpo.com/asia2025/
+LOCATION:首尔
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+TRIGGER:-P1DT
+END:VALARM
+END:VEVENT
+END:VCALENDAR

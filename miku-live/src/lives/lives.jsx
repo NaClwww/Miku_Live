@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import './../App.css';
 import { DateTime, Duration } from 'luxon';
-import liveData from './livedata.jsx';
+import liveData from './livedata.js';
 
 
 export default function LivePage() {
@@ -9,7 +9,7 @@ export default function LivePage() {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false });
   const [index, setIndex] = useState(0);
   const [isPhone, setIsPhone] = useState(false);
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsPhone(window.innerWidth < window.innerHeight*1.1);
@@ -38,6 +38,7 @@ export default function LivePage() {
       }
     }
 
+
     if (!diff || diff.milliseconds <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true };
 
     const duration = Duration.fromMillis(diff.milliseconds);
@@ -49,6 +50,73 @@ export default function LivePage() {
       isPast: false,
     };
   };
+
+  const generateSubscriptionLink = (type) => {
+    const baseUrl = window.location.origin;
+    let icsUrl = '';
+    
+    if (type === 'current') {
+      const currentLive = liveData[activeIndex];
+      const filename = `${currentLive.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`;
+      icsUrl = `${baseUrl}/ics/${filename}`;
+    } else if (type === 'all') {
+      icsUrl = `${baseUrl}/ics/all-miku-lives.ics`;
+    }
+    
+    // 生成 webcal:// 链接用于日历订阅
+    const webcalUrl = icsUrl.replace(/^https?:\/\//, 'webcal://');
+    
+    return { httpUrl: icsUrl, webcalUrl };
+  };
+
+    // 生成并显示订阅链接
+  const handleGenerateLink = async () => {
+  const { webcalUrl, httpUrl } = generateSubscriptionLink('current');
+  
+  // 尝试复制到剪贴板
+  const copied = await copyToClipboard(httpUrl);
+  if (copied) {
+    console.log('订阅链接已复制到剪贴板');
+  } else {
+    console.warn('复制失败，用户需要手动复制');
+  }
+};
+
+  // 复制链接到剪贴板
+const copyToClipboard = async (text) => {
+  try {
+    // 首先尝试使用现代 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      console.log('使用 Clipboard API 复制成功');
+      return true;
+    }
+  } catch (err) {
+    console.warn('Clipboard API 失败，尝试降级方案:', err);
+  }
+
+  // 降级方案：使用传统方法
+  try {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    // ... 设置样式避免闪烁
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    if (successful) {
+      console.log('使用传统方法复制成功');
+      return true;
+    }
+  } catch (err) {
+    console.error('传统复制方法也失败:', err);
+  }
+
+  return false;
+};
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -118,6 +186,7 @@ export default function LivePage() {
 
 
           <div className="flex justify-center py-4 mt-auto">
+            <button className="btn bottom" onClick={handleGenerateLink}>生成订阅链接</button>
             <button className="btn bottom" onClick={() => window.open(liveData[activeIndex].official, "_blank")}>官方网站</button>
           </div>
         </div>

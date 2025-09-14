@@ -4,51 +4,59 @@ import { createEvents } from 'ics';
 import { DateTime } from 'luxon';
 import liveData from './livedata.js';
 
-/**
- * 将日期时间字符串转换为ICS需要的格式
- */
+ 
+//将日期时间字符串转换为ICS需要的UTC格式
 const formatDateForICS = (dateTimeStr, timezone) => {
-  const dt = DateTime.fromISO(dateTimeStr, { zone: timezone });
+  const dt = DateTime.fromISO(dateTimeStr, { zone: timezone }); // 创建当地时间
+  const utcDt = dt.toUTC(); // 转换为UTC时间
+  
   return [
-    dt.year,
-    dt.month,
-    dt.day,
-    dt.hour,
-    dt.minute
+    utcDt.year,
+    utcDt.month,
+    utcDt.day,
+    utcDt.hour,
+    utcDt.minute
   ];
 };
 
-/**
- * 从liveData创建ICS事件数组
- */
+// 从liveData创建ICS事件数组
 const createICSEvents = (lives) => {
   const events = [];
 
   lives.forEach(live => {
-    // 为每场演出创建事件
     live.time.forEach(timeSlot => {
-      const startTime = formatDateForICS(timeSlot.localstarttime, timeSlot.timezone);
+      const timezone = timeSlot.timezone || 'Asia/Shanghai';
       
-      // 假设每场演出持续2小时
-      const endTime = DateTime.fromISO(timeSlot.localstarttime, { zone: timeSlot.timezone })
-        .plus({ hours: 2 });
+      // 创建当地时间
+      const localStart = DateTime.fromISO(timeSlot.localstarttime, { zone: timezone });
+      const localEnd = localStart.plus({ hours: 2 });
       
-      const endTimeArr = [
-        endTime.year,
-        endTime.month,
-        endTime.day,
-        endTime.hour,
-        endTime.minute
+      // 转换为UTC时间数组
+      const startTime = [
+        localStart.toUTC().year,
+        localStart.toUTC().month,
+        localStart.toUTC().day,
+        localStart.toUTC().hour,
+        localStart.toUTC().minute
+      ];
+      
+      const endTime = [
+        localEnd.toUTC().year,
+        localEnd.toUTC().month,
+        localEnd.toUTC().day,
+        localEnd.toUTC().hour,
+        localEnd.toUTC().minute
       ];
 
       events.push({
         start: startTime,
-        end: endTimeArr,
+        end: endTime,
         title: `${live.title} - ${timeSlot.position}`,
-        description: live.description || '初音未来演唱会',
+        description: `${live.description || '初音未来演唱会'}\n当地时间: ${localStart.toFormat('yyyy-MM-dd HH:mm')}`,
         location: timeSlot.position,
         url: live.official || '',
-        // 可以添加提醒，例如提前一天提醒
+        startInputType: 'utc', // 明确指定这是UTC时间
+        endInputType: 'utc',
         alarms: [
           {
             action: 'display',

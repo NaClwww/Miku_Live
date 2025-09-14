@@ -76,9 +76,9 @@ export default function LivePage() {
   // 尝试复制到剪贴板
   const copied = await copyToClipboard(httpUrl);
   if (copied) {
-    console.log('订阅链接已复制到剪贴板');
+    alert("已成功复制到剪贴板！")
   } else {
-    console.warn('复制失败，用户需要手动复制');
+    alert(httpUrl);
   }
 };
 
@@ -112,7 +112,7 @@ const copyToClipboard = async (text) => {
       return true;
     }
   } catch (err) {
-    console.error('传统复制方法也失败:', err);
+    alert("复制到剪贴板失败")
   }
 
   return false;

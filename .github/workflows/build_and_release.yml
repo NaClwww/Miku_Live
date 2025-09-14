@@ -76,7 +76,8 @@ jobs:
     - name: Build and push docker image
       working-directory: ./docker
       run: |
-        IMAGE_NAME=ghcr.io/${{ github.repository }}/miku_live
+        REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')  # 转换为小写
+        IMAGE_NAME=ghcr.io/$REPO_NAME/miku_live
         echo "Building and pushing Docker image: $IMAGE_NAME:${{ env.VERSION }}"
         docker build -t $IMAGE_NAME:${{ env.VERSION }} -t $IMAGE_NAME:latest .
         docker push $IMAGE_NAME:${{ env.VERSION }}

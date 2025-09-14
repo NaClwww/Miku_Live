@@ -3,6 +3,7 @@ import './../App.css';
 import { DateTime, Duration } from 'luxon';
 import liveData from './livedata.js';
 import {ColorExtractor} from 'react-color-extractor';
+import { createTheme, ThemeProvider } from '@mui/material/styles';  // 确保导入
 
 
 export default function LivePage() {
@@ -10,6 +11,35 @@ export default function LivePage() {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false });
   const [index, setIndex] = useState(0);
   const [isPhone, setIsPhone] = useState(false);
+  const [colors, setColors] = useState([]);
+  const [theme, setTheme] = useState(createTheme());
+
+  // 提取图片主色调并生成Material主题
+  const getColors = (extractedColors) => {
+    setColors(extractedColors);
+    
+    // 使用提取的颜色生成Material Design调色板
+    const primaryColor = extractedColors[2] || '#1976d2';  // 默认蓝色
+    const secondaryColor = extractedColors[3] || extractedColors[0] || '#dc004e';  // 默认粉色
+    
+    const newTheme = createTheme({
+      palette: {
+        primary: {
+          main: primaryColor,
+        },
+        secondary: {
+          main: secondaryColor,
+        },
+        background: {
+          default: extractedColors[0] || '#f5f5f5',
+          paper: extractedColors[1] || '#ffffff',
+        },
+        // 可添加更多，如 error, warning 等
+      },
+    });
+    console.log("New theme generated:", newTheme);
+    setTheme(newTheme);
+  };
 
   // 监听窗口大小变化，判断是否为手机屏幕比例
   useEffect(() => {
@@ -131,13 +161,16 @@ const copyToClipboard = async (text) => {
   }, [activeIndex]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-grey-100">
+    <ThemeProvider theme={theme}>  {/* 应用主题 */}
+    <div className="flex flex-col min-h-screen" style={{
+      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
+      }}>
       {/* 主要内容区域 */}
       <div className="h-[75vh] flex md:flex-row w-full">
         {/* 左侧图片区域 */}
           {isPhone ?
           <></>:
-          (<div className="md:w-[70%] h-full flex items-center justify-center p-4">
+          (<div className="md:w-[70%] h-full flex items-center justify-center p-4 shadow-2xsm">
             <img
               src={liveData[activeIndex].src}
               className="w-full h-full object-cover rounded-lg shadow-lg transition-all duration-500"
@@ -147,51 +180,53 @@ const copyToClipboard = async (text) => {
           </div>)}
 
         {/* 右侧文字区域 */}
-        <div className={` ${isPhone ? 'w-full' : 'md:w-[30%] md:max-w-[30%]'} flex flex-col p-4 h-full`}>
-          <h2 className="flex text-3xl font-bold mb-6 transition-all duration-500 text-center justify-center">
-            {liveData[activeIndex].title}
-          </h2>
-          <p className="flex text-lg transition-all duration-500 max-h-full overflow-auto">
-              Live information:
-          </p>
-          <div className="flex flex-1 w-full mt-2 overflow-hidden p-4">
-            <p className="flex text-lg w-full transition-all duration-500 max-h-full overflow-auto whitespace-pre-line">
-              {liveData[activeIndex].description}
+        <div className={` ${isPhone ? 'w-full' : 'md:w-[30%] md:max-w-[30%]'} flex flex-col h-full p-4`}>
+          <div className={"p-4 flex flex-col h-full w-full shadow-4xsm rounded-lg"} style={{background: theme.palette.background.paper}}>
+            <h2 className="flex text-3xl font-bold mb-6 transition-all duration-500 text-center justify-center" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
+              {liveData[activeIndex].title}
+            </h2>
+            <p className="flex text-lg transition-all duration-500 max-h-full overflow-auto" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
+                Live information:
             </p>
-          </div>
-          {countdown.isPast ? (
-            <p className="flex text-lg justify-center mt-4 text-red-500">已结束</p>
-          ) : (
-            <>
-              <p className="flex text-lg mt-4">下一站：</p>
-              <div className="flex justify-center space-x-2 mt-4">
-                <div className="text-center">
-                  <span className="block font-mono text-2xl font-bold">{liveData[activeIndex].time[index].position}</span>
-                  {/* <span className="text-sm">天</span> */}
+            <div className="flex flex-1 w-full mt-2 overflow-hidden p-4">
+              <p className="flex text-lg w-full transition-all duration-500 max-h-full overflow-auto whitespace-pre-line" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
+                {liveData[activeIndex].description}
+              </p>
+            </div>
+            {countdown.isPast ? (
+              <p className="flex text-lg justify-center mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>已结束</p>
+            ) : (
+              <>
+                <p className="flex text-lg mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>下一站：</p>
+                <div className="flex justify-center space-x-2 mt-4">
+                  <div className="text-center">
+                    <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{liveData[activeIndex].time[index].position}</span>
+                    {/* <span className="text-sm">天</span> */}
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{countdown.days}天</span>
+                    {/* <span className="text-sm">天</span> */}
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{countdown.hours}时</span>
+                    {/* <span className="text-sm">时</span> */}
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{countdown.minutes}分</span>
+                    {/* <span className="text-sm">分</span> */}
+                  </div>
+                  <div className="text-center">
+                    <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}} >{countdown.seconds}秒</span>
+                    {/* <span className="text-sm">秒</span> */}
+                  </div>
                 </div>
-                <div className="text-center">
-                  <span className="block font-mono text-2xl font-bold">{countdown.days}天</span>
-                  {/* <span className="text-sm">天</span> */}
-                </div>
-                <div className="text-center">
-                  <span className="block font-mono text-2xl font-bold">{countdown.hours}时</span>
-                  {/* <span className="text-sm">时</span> */}
-                </div>
-                <div className="text-center">
-                  <span className="block font-mono text-2xl font-bold">{countdown.minutes}分</span>
-                  {/* <span className="text-sm">分</span> */}
-                </div>
-                <div className="text-center">
-                  <span className="block font-mono text-2xl font-bold">{countdown.seconds}秒</span>
-                  {/* <span className="text-sm">秒</span> */}
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          <div className="flex justify-center py-4 space-x-8 mt-auto">
-            <button className="btn bottom" onClick={handleGenerateLink}>订阅链接</button>
-            <button className="btn bottom" onClick={() => window.open(liveData[activeIndex].official, "_blank")}>官方网站</button>
+            <div className="flex justify-center py-4 space-x-8 mt-auto">
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={handleGenerateLink} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button>
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => window.open(liveData[activeIndex].official, "_blank")} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>官方网站</button>
+            </div>
           </div>
         </div>
       </div>
@@ -199,6 +234,9 @@ const copyToClipboard = async (text) => {
       {/* 底部照片展示区域 */}
       <div className="flex h-[25vh] shadow-lg w-full">
         <div className="container mx-auto">
+          <ColorExtractor getColors={getColors}>
+            <img src={liveData[activeIndex].src} style={{ display: 'none' }} alt="hidden for color extraction" />
+          </ColorExtractor>
           <div className="flex flex-nowrap overflow-x-auto space-x-6 py-2 px-4 w-full">
             {liveData.map((photo, idx) => (
               <div 
@@ -221,5 +259,6 @@ const copyToClipboard = async (text) => {
         </div>
       </div>
     </div>
+    </ThemeProvider>
   );
 }

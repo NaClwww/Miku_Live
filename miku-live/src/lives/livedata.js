@@ -41,7 +41,7 @@ const liveData = [
     src: "/image/lawson_50th_Anniversary.webp",
     title: "Hatsune Miku LAWSON 50th Anniversary Special LIVE",
     official:"https://l-tike.com/concert/lawson50th_260117_0118/",
-    description: "罗森最新力作",
+    description: "",
     time:[
       { localstarttime: "2026-01-17T14:00:00", timezone: "Asia/Tokyo", position: "横滨" },
       { localstarttime: "2026-01-17T19:00:00", timezone: "Asia/Tokyo", position: "横滨" },
@@ -53,7 +53,7 @@ const liveData = [
     src: "/image/deco_miku_2025.avif",
     title: "Hatsune Miku Deco Live 2025",
     official: "https://decomiku-live.com/",
-    description: "爹扣27最新力作\n\n伟大无需多言",
+    description: "爹扣27最新力作\n伟大无需多言",
     time: [
       { localstarttime: "2026-02-11T12:00:00", timezone: "Asia/Tokyo", position: "东京" },
       { localstarttime: "2026-02-11T18:00:00", timezone: "Asia/Tokyo", position: "东京" }

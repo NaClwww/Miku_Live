@@ -9,4 +9,5 @@
 - [x] 适配手机页面
 - [x] icalendar订阅
 - [ ] i18n
-- [ ] 界面美化，自动配色
+- [x] 界面美化，自动配色
+- [ ] 完善Live Information

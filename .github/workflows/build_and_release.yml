@@ -35,24 +35,30 @@ jobs:
         echo "VERSION=${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "Version set to: ${BASE_VERSION}-build-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)"
 
-    # 修复：指向正确的项目目录
+    # 改为 Yarn
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'  # 使用Node.js 20而不是24
-        cache: 'npm'
-        cache-dependency-path: './miku-live/package-lock.json'  # 修复路径
+        cache: 'yarn'  # 改为 yarn
+        cache-dependency-path: './miku-live/yarn.lock'  # 改为 yarn.lock
 
     - name: Install dependencies
-      working-directory: ./miku-live  # 修复工作目录
-      run: npm ci || npm install
+      working-directory: ./miku-live
+      run: |
+        yarn install --frozen-lockfile  # 使用 yarn install
+        # 确保 ics 包被正确安装
+        yarn list ics || yarn add ics@^3.1.0
 
     - name: Build project
-      working-directory: ./miku-live  # 修复工作目录
+      working-directory: ./miku-live
       run: |
         echo "Building React project..."
-        npm run build
-        if [ ! -d "dist" ]; then  # Vite项目通常构建到dist目录
+        # 先运行 genics.js 生成 ICS 文件
+        yarn generate-ics  # 使用 yarn 运行脚本
+        # 然后构建项目
+        yarn build  # 使用 yarn build
+        if [ ! -d "dist" ]; then
           echo "::error::Build directory not found! Build may have failed."
           exit 1
         fi
@@ -64,7 +70,7 @@ jobs:
       
     - name: Move build files to docker directory
       run: |
-        cp -R ./miku-live/dist/* ./docker/build/  # 从dist目录复制
+        cp -R ./miku-live/dist/* ./docker/build/
         echo "Moved build files to docker directory"
 
     - name: Set up Docker Buildx

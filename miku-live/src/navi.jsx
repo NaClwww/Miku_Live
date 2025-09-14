@@ -6,6 +6,13 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 
 function Navi(){
+    const closeDrawer = () => {
+        const checkbox = document.getElementById('my-drawer');
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+    };
+
     return(
         <div className="drawer">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -18,25 +25,25 @@ function Navi(){
                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                 <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
                     <li>
-                        <Link to="/" className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
+                        <Link to="/" onClick={closeDrawer} className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
                             <HomeIcon className="w-5 h-5 flex-shrink-0 text-primary" />
                             <span className="font-medium">首页</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/lives" className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
+                        <Link to="/lives" onClick={closeDrawer} className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
                             <EventAvailableIcon className="w-5 h-5 flex-shrink-0 text-secondary" />
                             <span className="font-medium">演唱会信息</span>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/music" className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
+                        <Link to="/music" onClick={closeDrawer} className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
                             <LibraryMusicIcon className="w-5 h-5 flex-shrink-0 text-accent" />
                             <span className="font-medium">音乐卡片</span>
                         </Link>
                     </li>
                     <li>
-                        <Link onClick={() => { window.location.href = "https://github.com/NaClwww/Miku_Live" }} className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
+                        <Link onClick={() => { closeDrawer(); window.location.href = "https://github.com/NaClwww/Miku_Live" }} className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-base-300 transition-colors">
                             <InfoOutlinedIcon className="w-5 h-5 flex-shrink-0 text-info" />
                             <span className="font-medium">关于项目</span>
                         </Link>

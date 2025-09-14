@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import './../App.css';
 import { DateTime, Duration } from 'luxon';
 import liveData from './livedata.js';
+import {ColorExtractor} from 'react-color-extractor';
 
 
 export default function LivePage() {
@@ -10,6 +11,7 @@ export default function LivePage() {
   const [index, setIndex] = useState(0);
   const [isPhone, setIsPhone] = useState(false);
 
+  // 监听窗口大小变化，判断是否为手机屏幕比例
   useEffect(() => {
     const handleResize = () => {
       setIsPhone(window.innerWidth < window.innerHeight*1.1);
@@ -21,6 +23,7 @@ export default function LivePage() {
     };
   }, []);
 
+  // 计算倒计时
   const calculateCountdown = (timeData) => {
     if (!timeData || timeData.length === 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false };
 
@@ -51,6 +54,8 @@ export default function LivePage() {
     };
   };
 
+
+  // 订阅相关链接生成
   const generateSubscriptionLink = (type) => {
     const baseUrl = window.location.origin;
     let icsUrl = '';
@@ -184,9 +189,8 @@ const copyToClipboard = async (text) => {
             </>
           )}
 
-
-          <div className="flex justify-center py-4 mt-auto">
-            <button className="btn bottom" onClick={handleGenerateLink}>生成订阅链接</button>
+          <div className="flex justify-center py-4 space-x-8 mt-auto">
+            <button className="btn bottom" onClick={handleGenerateLink}>订阅链接</button>
             <button className="btn bottom" onClick={() => window.open(liveData[activeIndex].official, "_blank")}>官方网站</button>
           </div>
         </div>

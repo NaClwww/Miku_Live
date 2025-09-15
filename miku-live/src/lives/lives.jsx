@@ -5,7 +5,8 @@ import liveData from './livedata.js';
 import {ColorExtractor} from 'react-color-extractor';
 import { createTheme, ThemeProvider } from '@mui/material/styles';  // 确保导入
 import NotificationsIcon from '@mui/icons-material/Notifications';  // 添加图标导入
-
+import WebLink from '@mui/icons-material/Link';
+import { Tooltip } from '@mui/material';  // 添加Tooltip导入
 
 export default function LivePage() {
   const [activeIndex, setActiveIndex] = useState(liveData.length - 1);
@@ -115,9 +116,9 @@ export default function LivePage() {
   };
 
     // 生成并显示订阅链接
-  const handleGenerateLink = async () => {
-  const { webcalUrl, httpUrl } = generateSubscriptionLink('current');
-  
+  const handleGenerateLink = async (type) => {
+  const { webcalUrl, httpUrl } = generateSubscriptionLink(type);
+
   // 尝试复制到剪贴板
   const copied = await copyToClipboard(httpUrl);
   if (copied) {
@@ -170,15 +171,17 @@ const copyToClipboard = async (text) => {
 
   return (
     <ThemeProvider theme={theme}>  {/* 应用主题 */}
-    <button 
-      className="top-1 right-1 absolute z-101" 
-      style={{
-        backgroundColor: 'transparent',  // 透明背景
-        border: 'none',  // 无边框
+    <Tooltip title="订阅链接">
+      <button 
+        className="top-1 right-1 absolute z-101" 
+        style={{
+          backgroundColor: 'transparent',  // 透明背景
+          border: 'none',  // 无边框
       }}
-      onClick={() => { handleGenerateLink(); setTouched(true); }} >
-      <NotificationsIcon style={{ marginRight: '8px' }}/>
-    </button>
+      onClick={() => { handleGenerateLink("all"); setTouched(true); }} >
+        <NotificationsIcon style={{ marginRight: '8px' }}/>
+      </button>
+    </Tooltip>
     <div className="flex flex-col min-h-screen duration-500" style={{
       background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
     }}>
@@ -203,7 +206,7 @@ const copyToClipboard = async (text) => {
               {liveData[activeIndex].title}
             </h2>
             <p className="flex text-lg transition-all duration-500 max-h-full overflow-auto" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
-                Live information:
+              演出信息:
             </p>
             <div className="flex flex-1 w-full mt-2 overflow-hidden p-4">
               <p className="flex text-lg w-full transition-all duration-500 max-h-full overflow-auto whitespace-pre-line" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
@@ -214,7 +217,7 @@ const copyToClipboard = async (text) => {
               <p className="flex text-lg justify-center mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>已结束</p>
             ) : (
               <>
-                <p className="flex text-lg mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>下一站：</p>
+                <p className="flex text-lg mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>下一场倒计时：</p>
                 <div className="flex justify-center space-x-2 mt-4">
                   <div className="text-center">
                     <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{liveData[activeIndex].time[index].position}</span>
@@ -241,8 +244,12 @@ const copyToClipboard = async (text) => {
             )}
 
             <div className="flex justify-center py-4 space-x-8 mt-auto">
-              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { handleGenerateLink(); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button>
-              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { window.open(liveData[activeIndex].official, "_blank"); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>官方网站</button>
+              {/* <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { handleGenerateLink(); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button> */}
+              <Tooltip title="官方网址">
+                <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { window.open(liveData[activeIndex].official, "_blank"); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>
+                  <WebLink />
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>

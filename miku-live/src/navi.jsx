@@ -14,7 +14,7 @@ function Navi(){
     };
 
     return(
-        <div className="drawer" style={{zIndex:100}}>
+        <div className="drawer" style={{zIndex:50}}>
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
                 <label htmlFor="my-drawer" className="btn btn-ghost btn-circle drawer-button">

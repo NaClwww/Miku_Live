@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import './../App.css';
 import { DateTime, Duration } from 'luxon';
 import liveData from './livedata.js';
 import {ColorExtractor} from 'react-color-extractor';
 import { createTheme, ThemeProvider } from '@mui/material/styles';  // 确保导入
+import NotificationsIcon from '@mui/icons-material/Notifications';  // 添加图标导入
 
 
 export default function LivePage() {
@@ -13,6 +14,16 @@ export default function LivePage() {
   const [isPhone, setIsPhone] = useState(false);
   const [colors, setColors] = useState([]);
   const [theme, setTheme] = useState(createTheme());
+  const [isTouched, setTouched] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isTouched) return; // 如果用户触摸过屏幕，则不自动切换
+      setActiveIndex((activeIndex + 1) % liveData.length);
+
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeIndex, isTouched]);
 
   // 提取图片主色调并生成Material主题
   const getColors = (extractedColors) => {
@@ -37,7 +48,6 @@ export default function LivePage() {
         // 可添加更多，如 error, warning 等
       },
     });
-    console.log("New theme generated:", newTheme);
     setTheme(newTheme);
   };
 
@@ -123,7 +133,6 @@ const copyToClipboard = async (text) => {
     // 首先尝试使用现代 Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
-      console.log('使用 Clipboard API 复制成功');
       return true;
     }
   } catch (err) {
@@ -143,7 +152,6 @@ const copyToClipboard = async (text) => {
     document.body.removeChild(textArea);
     
     if (successful) {
-      console.log('使用传统方法复制成功');
       return true;
     }
   } catch (err) {
@@ -162,9 +170,18 @@ const copyToClipboard = async (text) => {
 
   return (
     <ThemeProvider theme={theme}>  {/* 应用主题 */}
-    <div className="flex flex-col min-h-screen" style={{
-      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-      }}>
+    <button 
+      className="top-1 right-1 absolute z-101" 
+      style={{
+        backgroundColor: 'transparent',  // 透明背景
+        border: 'none',  // 无边框
+      }}
+      onClick={() => { handleGenerateLink(); setTouched(true); }} >
+      <NotificationsIcon style={{ marginRight: '8px' }}/>
+    </button>
+    <div className="flex flex-col min-h-screen duration-500" style={{
+      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+    }}>
       {/* 主要内容区域 */}
       <div className="h-[75vh] flex md:flex-row w-full">
         {/* 左侧图片区域 */}
@@ -181,7 +198,7 @@ const copyToClipboard = async (text) => {
 
         {/* 右侧文字区域 */}
         <div className={` ${isPhone ? 'w-full' : 'md:w-[30%] md:max-w-[30%]'} flex flex-col h-full p-4`}>
-          <div className={"p-4 flex flex-col h-full w-full shadow-4xsm rounded-lg"} style={{background: theme.palette.background.paper}}>
+          <div className={"p-4 flex flex-col h-full w-full shadow-4xsm rounded-lg duration-500"} style={{background: theme.palette.background.paper}}>
             <h2 className="flex text-3xl font-bold mb-6 transition-all duration-500 text-center justify-center" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
               {liveData[activeIndex].title}
             </h2>
@@ -224,8 +241,8 @@ const copyToClipboard = async (text) => {
             )}
 
             <div className="flex justify-center py-4 space-x-8 mt-auto">
-              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={handleGenerateLink} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button>
-              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => window.open(liveData[activeIndex].official, "_blank")} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>官方网站</button>
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { handleGenerateLink(); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button>
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { window.open(liveData[activeIndex].official, "_blank"); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>官方网站</button>
             </div>
           </div>
         </div>
@@ -243,7 +260,7 @@ const copyToClipboard = async (text) => {
                 key={idx}
                 className="flex-shrink-0 flex-grow-0 cursor-pointer "
                 style={{ width: '256px', flexBasis: '256px', aspectRatio: '16/10' }}
-                onClick={() => setActiveIndex(idx)}
+                onClick={() => { setActiveIndex(idx); setTouched(true); }}
               >
                 <img
                   src={photo.src}

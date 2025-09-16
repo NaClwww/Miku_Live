@@ -7,6 +7,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';  // 确保导
 import NotificationsIcon from '@mui/icons-material/Notifications';  // 添加图标导入
 import WebLink from '@mui/icons-material/Link';
 import { Tooltip } from '@mui/material';  // 添加Tooltip导入
+import { useTranslation } from 'react-i18next'; // 添加 i18n 导入
 
 export default function LivePage() {
   const [activeIndex, setActiveIndex] = useState(liveData.length - 1);
@@ -16,6 +17,7 @@ export default function LivePage() {
   const [colors, setColors] = useState([]);
   const [theme, setTheme] = useState(createTheme());
   const [isTouched, setTouched] = useState(false);
+  const { t } = useTranslation("lives"); // 添加 hook
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -117,50 +119,49 @@ export default function LivePage() {
 
     // 生成并显示订阅链接
   const handleGenerateLink = async (type) => {
-  const { webcalUrl, httpUrl } = generateSubscriptionLink(type);
+    const { webcalUrl, httpUrl } = generateSubscriptionLink(type);
 
-  // 尝试复制到剪贴板
-  const copied = await copyToClipboard(httpUrl);
-  if (copied) {
-    alert("已成功复制到剪贴板！")
-  } else {
-    alert(httpUrl);
-  }
-};
+    // 尝试复制到剪贴板
+    const copied = await copyToClipboard(httpUrl);
+    if (copied) {
+      alert("已成功复制到剪贴板！")
+    } else {
+      alert(httpUrl);
+    }
+  };
 
   // 复制链接到剪贴板
-const copyToClipboard = async (text) => {
-  try {
-    // 首先尝试使用现代 Clipboard API
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      return true;
+  const copyToClipboard = async (text) => {
+    try {
+      // 首先尝试使用现代 Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (err) {
+      console.warn('Clipboard API 失败，尝试降级方案:', err);
     }
-  } catch (err) {
-    console.warn('Clipboard API 失败，尝试降级方案:', err);
-  }
-
-  // 降级方案：使用传统方法
-  try {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    // ... 设置样式避免闪烁
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    const successful = document.execCommand('copy');
-    document.body.removeChild(textArea);
-    
-    if (successful) {
-      return true;
+    // 降级方案：使用传统方法
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      // ... 设置样式避免闪烁
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        return true;
+      }
+    } catch (err) {
+      alert("复制到剪贴板失败")
     }
-  } catch (err) {
-    alert("复制到剪贴板失败")
-  }
 
-  return false;
-};
+    return false;
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -172,7 +173,7 @@ const copyToClipboard = async (text) => {
   return (
     <ThemeProvider theme={theme}>  {/* 应用主题 */}
     <Tooltip title="订阅链接">
-      <button 
+      {/* <button 
         className="top-1 right-1 absolute z-101" 
         style={{
           backgroundColor: 'transparent',  // 透明背景
@@ -180,7 +181,7 @@ const copyToClipboard = async (text) => {
       }}
       onClick={() => { handleGenerateLink("all"); setTouched(true); }} >
         <NotificationsIcon style={{ marginRight: '8px' }}/>
-      </button>
+      </button> */}
     </Tooltip>
     <div className="flex flex-col min-h-screen duration-500" style={{
       background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
@@ -206,7 +207,7 @@ const copyToClipboard = async (text) => {
               {liveData[activeIndex].title}
             </h2>
             <p className="flex text-lg transition-all duration-500 max-h-full overflow-auto" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
-              演出信息:
+              {t("Event Information")}
             </p>
             <div className="flex flex-1 w-full mt-2 overflow-hidden p-4">
               <p className="flex text-lg w-full transition-all duration-500 max-h-full overflow-auto whitespace-pre-line" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>
@@ -214,10 +215,10 @@ const copyToClipboard = async (text) => {
               </p>
             </div>
             {countdown.isPast ? (
-              <p className="flex text-lg justify-center mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>已结束</p>
+              <p className="flex text-lg justify-center mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{t("Ended")}</p>
             ) : (
               <>
-                <p className="flex text-lg mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>下一场倒计时：</p>
+                <p className="flex text-lg mt-4" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{t("Next Countdown")}</p>
                 <div className="flex justify-center space-x-2 mt-4">
                   <div className="text-center">
                     <span className="block font-mono text-2xl font-bold" style={{color: theme.palette.getContrastText(theme.palette.background.paper)}}>{liveData[activeIndex].time[index].position}</span>
@@ -244,12 +245,8 @@ const copyToClipboard = async (text) => {
             )}
 
             <div className="flex justify-center py-4 space-x-8 mt-auto">
-              {/* <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { handleGenerateLink(); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>订阅链接</button> */}
-              <Tooltip title="官方网址">
-                <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500" onClick={() => { window.open(liveData[activeIndex].official, "_blank"); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>
-                  <WebLink />
-                </button>
-              </Tooltip>
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500 flex-1" onClick={() => { handleGenerateLink(); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>{t("Subscribe")}</button>
+              <button className="btn bottom rounded-lg hover:scale-105 z-10 duration-500 flex-1" onClick={() => { window.open(liveData[activeIndex].official, "_blank"); setTouched(true); }} style={{backgroundColor: theme.palette.primary.main,color: theme.palette.getContrastText(theme.palette.primary.main),border:0}}>{t("Official Website")}</button>
             </div>
           </div>
         </div>

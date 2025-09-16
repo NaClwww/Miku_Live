@@ -4,6 +4,7 @@ import Index from './index/index.jsx'
 import LivePage from './lives/lives.jsx'
 import "./App.css"
 import Gift from './gift/gift.jsx'
+import './i18n';
 
 function App() {
 
